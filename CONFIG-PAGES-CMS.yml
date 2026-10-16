@@ -1,0 +1,125 @@
+# Configuración del panel de edición (Pages CMS)
+media:
+  input: public/media
+  output: /media
+
+content:
+  # ---------- Datos generales y portada ----------
+  - name: sitio
+    label: Sitio y portada
+    type: file
+    path: src/content/sitio.json
+    format: json
+    fields:
+      - { name: nombre, label: Nombre, type: string }
+      - { name: rotulo, label: "Rótulo, línea gris (ej. Arte · Museografía)", type: string }
+      - { name: rotulo_acento, label: "Rótulo, línea de color (ej. Alimento)", type: string }
+      - { name: frase, label: Frase de portada, type: string }
+      - { name: bajada, label: Texto bajo la frase, type: text }
+      - { name: imagen, label: "Imagen de portada (JPG/WebP, máx. 0,5 MB)", type: image }
+      - { name: loop, label: "Video oscuro de portada en loop (MP4 sin sonido, 8–12 s, máx. 4 MB) — la imagen de portada se usa como respaldo", type: file, options: { extensions: [mp4, webm] } }
+      - { name: loop_movil, label: "Video de portada para CELULAR (opcional; 1280×720, menos de 2 MB). Si está vacío, el celular usa el de arriba", type: file, options: { extensions: [mp4, webm] } }
+      - { name: encuadre, label: "Encuadre de la portada (qué parte se conserva cuando la pantalla recorta la imagen o el video)", type: select, default: centro, options: { values: [centro, arriba, abajo] } }
+      - { name: imagen_alt, label: "Descripción de la imagen de portada (qué se ve; para personas ciegas y Google)", type: string }
+      - { name: pie_imagen, label: Pie de foto y créditos de la portada, type: string }
+      - { name: descripcion_google, label: "Descripción para Google y WhatsApp (máx. 155 caracteres)", type: text }
+      - { name: correo, label: Correo, type: string }
+      - { name: whatsapp, label: "WhatsApp con código de país (ej. 573001234567)", type: string }
+      - { name: instagram, label: Instagram personal (sin @), type: string }
+      - { name: instagram_mesa, label: Instagram de Plato de Sol (sin @), type: string }
+      - { name: behance, label: Enlace a Behance (archivo gráfico), type: string }
+      - { name: enlace_oficio, label: "Enlace al sitio de arquitectura (vacío = https://hugoherreraarquitectura.com)", type: string }
+
+  # ---------- Textos de la página de inicio ----------
+  - name: textos
+    label: Textos de inicio
+    type: file
+    path: src/content/textos.json
+    format: json
+    fields:
+      - { name: postulado_titulo, label: Título del postulado, type: string }
+      - { name: postulado, label: "Postulado (línea en blanco = nuevo párrafo)", type: text }
+      - { name: firma_rotulo, label: "Franja Brasa — rótulo", type: string }
+      - { name: firma, label: "Franja Brasa — frase firma (vacía = no aparece)", type: text }
+      - { name: como_titulo, label: "Título de la sección Práctica (el menú dice Práctica; ideal que coincida)", type: string }
+      - { name: como, label: Cómo trabajo, type: text }
+      - { name: como_cita, label: Cita destacada de "Cómo trabajo", type: text }
+      - { name: museo_titulo, label: "Museografía — título de la franja (vacío = Museografía)", type: string }
+      - { name: museo_texto, label: "Museografía — texto breve (opcional)", type: text }
+      - { name: contacto_titulo, label: Título de contacto, type: string }
+      - { name: contacto, label: Texto de contacto, type: text }
+
+  # ---------- Obras (una entrada por obra) ----------
+  - name: obras
+    label: Obras
+    type: collection
+    path: src/content/obras
+    format: json
+    filename: "{primary}.json"
+    view:
+      primary: titulo
+      fields: [titulo, tipo, anio, publicar, orden]
+      sort: orden
+      order: asc
+    fields:
+      - { name: titulo, label: Título, type: string, required: true }
+      - { name: slug, label: "Dirección web (ej. punto-de-no-retorno, sin tildes ni espacios)", type: string, required: true }
+      - name: tipo
+        label: "Tipo (obra = obra propia · museografia = diseño o desarrollo técnico de una exposición; va en su propia franja)"
+        type: select
+        default: obra
+        options:
+          values: [obra, museografia]
+      - { name: publicar, label: Publicar en la web, type: boolean }
+      - { name: destacada, label: "Destacada (obras: franja grande en la portada; si no, en Más obras. Museografía: no aplica)", type: boolean }
+      - { name: orden, label: Orden (1 = primero), type: number }
+      - name: tema
+        label: "Color de la franja (selva = territorio, cassis = performance, piedra = alimento, papel/tinta = neutros)"
+        type: select
+        options:
+          values: [tinta, papel, selva, cassis, piedra, brasa]
+      - { name: anio, label: Año, type: string }
+      - { name: formato, label: "Formato / medio (en Plato de Sol: subtítulo, ej. Laboratorio de alimento y pensamiento)", type: string }
+      - { name: lugar, label: "Lugar y marco (en Plato de Sol: crédito, ej. Un proyecto de Diana Rodríguez y Hugo Herrera)", type: string }
+      - { name: rol, label: Mi rol (ej. Co-creación con…), type: string }
+      - { name: sinopsis, label: "Sinopsis (2–4 frases; también se usa para Google)", type: text }
+      - { name: cita, label: Cita destacada, type: text }
+      - { name: texto, label: "Texto ampliado (línea en blanco = nuevo párrafo)", type: text }
+      - { name: imagen, label: "Imagen principal HORIZONTAL (ideal 2000 px de ancho, JPG, máx. 1 MB; el sitio crea versiones livianas solo)", type: image }
+      - { name: imagen_alt, label: "Descripción de la imagen (qué se ve; para personas ciegas y Google)", type: string }
+      - { name: logo, label: "Logo (opcional; aparece pequeño junto al título. PNG con fondo transparente)", type: image }
+      - { name: pie_imagen, label: Pie de foto y crédito, type: string }
+      - { name: loop, label: "Video en loop en vez de la imagen (MP4 horizontal, sin sonido, 8–12 s, máx. 4 MB; la imagen queda de respaldo)", type: file, options: { extensions: [mp4, webm] } }
+      - { name: loop_movil, label: "Video en loop para CELULAR (opcional; 1280×720, menos de 2 MB). Si está vacío, el celular usa el de arriba", type: file, options: { extensions: [mp4, webm] } }
+      - { name: encuadre, label: "Encuadre en la página de la obra (qué parte se conserva si hay que recortar un poco: centro, arriba o abajo)", type: select, default: centro, options: { values: [centro, arriba, abajo] } }
+      - { name: video, label: Enlace de YouTube o Vimeo — opcional, type: string }
+      - name: licencia
+        label: "Licencia de la obra (por defecto: todos los derechos reservados. Abrir con CC solo si TODOS los coautores aceptan)"
+        type: select
+        default: reservados
+        options:
+          values: [reservados, cc-by-nc-sa]
+      - { name: agradecimientos, label: "Agradecimientos (comunidades, instituciones de apoyo, personas que compartieron saberes; no son coautores)", type: text }
+      - { name: ficha_pdf, label: "Ficha técnica o rider en PDF (vacío = no aparece el botón)", type: file, options: { extensions: [pdf] } }
+      - name: galeria
+        label: "Galería (cada foto con su crédito)"
+        type: object
+        list: true
+        fields:
+          - { name: imagen, label: "Foto (2000 px, máx. 1 MB)", type: image }
+          - { name: pie, label: "Pie de foto y crédito (ej. Montaje en ARTBO. Foto: Nombre Apellido)", type: string }
+          - { name: alt, label: "Descripción (qué se ve)", type: string }
+      - name: ficha
+        label: Ficha técnica
+        type: object
+        list: true
+        fields:
+          - { name: etiqueta, label: Dato, type: string }
+          - { name: valor, label: Valor, type: string }
+      - name: creditos
+        label: Créditos
+        type: object
+        list: true
+        fields:
+          - { name: rol, label: Rol, type: string }
+          - { name: personas, label: Personas, type: string }
