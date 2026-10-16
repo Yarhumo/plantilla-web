@@ -1,0 +1,148 @@
+media:
+  input: src/assets/media
+  output: ../../assets/media
+  extensions: [jpg, jpeg, png, webp, avif, svg]
+
+content:
+  - name: sitio
+    label: Datos del sitio
+    type: file
+    path: src/content/sitio/sitio.json
+    format: json
+    fields:
+      - { name: nombre, label: Nombre del negocio, type: string, required: true }
+      - { name: eslogan, label: Frase corta (va en el título de Google), type: string }
+      - { name: descripcion, label: Descripción para Google (máx. 160 caracteres), type: text, required: true }
+      - { name: url, label: Dirección del sitio (https://...), type: string, required: true }
+      - { name: idioma, label: Idioma, type: string, default: es-CO }
+      - name: tipo_negocio
+        label: Tipo de negocio (para Google)
+        type: select
+        options:
+          values: [LocalBusiness, ProfessionalService, Organization, Restaurant, Store, HomeAndConstructionBusiness, LodgingBusiness, EducationalOrganization, MedicalBusiness, Person]
+      - { name: ciudad, label: Ciudad, type: string }
+      - { name: region, label: Departamento, type: string }
+      - { name: pais, label: País (código), type: string, default: CO }
+      - { name: direccion, label: Dirección (dejar vacío si no atiende en sitio), type: string }
+      - { name: area_servicio, label: Zonas que atiende, type: string, list: true }
+      - { name: telefono, label: Teléfono, type: string }
+      - { name: whatsapp, label: WhatsApp (solo números, con 57), type: string }
+      - { name: whatsapp_mensaje, label: Mensaje inicial de WhatsApp, type: string }
+      - { name: correo, label: Correo, type: string }
+      - { name: horario, label: Horario, type: string }
+      - { name: formulario_url, label: Enlace del formulario (Jotform u otro), type: string }
+      - name: redes
+        label: Redes sociales
+        type: object
+        list: true
+        fields:
+          - { name: nombre, label: Red, type: string }
+          - { name: url, label: Enlace, type: string }
+      - { name: logo, label: Logo (opcional), type: image }
+      - { name: imagen_compartir, label: Imagen para compartir en WhatsApp/redes (1200×630), type: image }
+      - { name: color_tema, label: Color de la barra del navegador (hex), type: string, default: "#141312" }
+      - { name: verificacion_google, label: Código de verificación de Google (opcional), type: string }
+      - { name: analitica_token, label: Token de Cloudflare Web Analytics (opcional), type: string }
+
+  - name: inicio
+    label: Página de inicio
+    type: file
+    path: src/content/inicio/inicio.json
+    format: json
+    fields:
+      - { name: titular, label: Titular (H1), type: string, required: true }
+      - { name: bajada, label: Texto bajo el titular, type: text }
+      - { name: portada, label: Imagen de portada (horizontal, 2400 px), type: image }
+      - { name: portada_alt, label: Descripción de la portada (para ciegos y Google), type: string }
+      - { name: boton_texto, label: Texto del botón, type: string, default: Conversemos }
+      - { name: intro_titulo, label: Título de la introducción, type: string }
+      - { name: intro, label: Introducción (separe párrafos con una línea vacía), type: text }
+      - { name: servicios_titulo, label: Título de servicios, type: string }
+      - name: servicios
+        label: Servicios
+        type: object
+        list: true
+        fields:
+          - { name: titulo, label: Título, type: string }
+          - { name: texto, label: Texto, type: text }
+      - { name: proyectos_titulo, label: Título de proyectos, type: string }
+      - { name: proceso_titulo, label: Título del proceso, type: string }
+      - name: proceso
+        label: Pasos del proceso
+        type: object
+        list: true
+        fields:
+          - { name: titulo, label: Título, type: string }
+          - { name: texto, label: Texto, type: text }
+      - name: testimonios
+        label: Testimonios (solo con permiso escrito)
+        type: object
+        list: true
+        fields:
+          - { name: texto, label: Testimonio, type: text }
+          - { name: autor, label: Nombre, type: string }
+          - { name: contexto, label: Proyecto o cargo, type: string }
+      - name: preguntas
+        label: Preguntas frecuentes
+        type: object
+        list: true
+        fields:
+          - { name: pregunta, label: Pregunta, type: string }
+          - { name: respuesta, label: Respuesta, type: text }
+      - { name: contacto_titulo, label: Título de contacto, type: string }
+      - { name: contacto_texto, label: Texto de contacto, type: text }
+
+  - name: proyectos
+    label: Proyectos
+    type: collection
+    path: src/content/proyectos
+    filename: "{primary}.md"
+    view:
+      fields: [titulo, publicar, destacado, orden]
+      primary: titulo
+      sort: [orden, titulo]
+    fields:
+      - { name: titulo, label: Título, type: string, required: true }
+      - { name: resumen, label: Resumen para Google (máx. 160 caracteres), type: text, required: true }
+      - { name: publicar, label: Publicar, type: boolean, default: false }
+      - { name: destacado, label: Destacado en el inicio, type: boolean, default: false }
+      - { name: orden, label: Orden (1 = primero), type: number, default: 99 }
+      - { name: fecha, label: Fecha, type: date }
+      - { name: categoria, label: Categoría, type: string }
+      - { name: ubicacion, label: Lugar, type: string }
+      - { name: cliente, label: Cliente (con permiso), type: string }
+      - { name: area, label: Área, type: string }
+      - { name: estado, label: Estado, type: string }
+      - { name: portada, label: Imagen principal (horizontal), type: image, required: true }
+      - { name: portada_alt, label: Descripción de la imagen principal, type: string, required: true }
+      - name: galeria
+        label: Galería
+        type: object
+        list: true
+        fields:
+          - { name: imagen, label: Imagen, type: image, required: true }
+          - { name: alt, label: Descripción (para ciegos y Google), type: string, required: true }
+          - { name: pie, label: Pie de foto, type: string }
+      - name: creditos
+        label: Créditos
+        type: object
+        list: true
+        fields:
+          - { name: rol, label: Rol, type: string }
+          - { name: nombre, label: Nombre, type: string }
+      - { name: foto_credito, label: Autor de las fotos, type: string }
+      - { name: body, label: "Texto (reto → decisión → resultado)", type: rich-text }
+
+  - name: paginas
+    label: Páginas
+    type: collection
+    path: src/content/paginas
+    filename: "{primary}.md"
+    view:
+      fields: [titulo, publicar]
+      primary: titulo
+    fields:
+      - { name: titulo, label: Título, type: string, required: true }
+      - { name: descripcion, label: Descripción para Google, type: text, required: true }
+      - { name: publicar, label: Publicar, type: boolean, default: true }
+      - { name: body, label: Texto, type: rich-text }
