@@ -1,0 +1,24 @@
+---
+interface Props { sitio: any; whatsapp?: string; version?: string }
+const { sitio, whatsapp, version } = Astro.props;
+const anio = new Date().getFullYear();
+---
+<footer class="pie">
+  <div class="contenedor pie__fila">
+    <div>
+      <p class="pie__nombre">{sitio.nombre}</p>
+      {sitio.ciudad && <p>{sitio.ciudad}{sitio.region ? `, ${sitio.region}` : ''}</p>}
+    </div>
+    <ul class="pie__enlaces">
+      {whatsapp && <li><a href={whatsapp} rel="noopener" target="_blank">WhatsApp<span class="sr"> (abre en una pestaña nueva)</span> ↗</a></li>}
+      {sitio.correo && <li><a href={`mailto:${sitio.correo}`}>{sitio.correo}</a></li>}
+      {sitio.redes.map((r: { nombre: string; url: string }) => (
+        <li><a href={r.url} rel="noopener me" target="_blank">{r.nombre}<span class="sr"> (abre en una pestaña nueva)</span> ↗</a></li>
+      ))}
+    </ul>
+  </div>
+  <div class="contenedor pie__legal">
+    <p>© {anio} {sitio.nombre}. Todos los derechos reservados.</p>
+    <p><a href="/privacidad/">Tratamiento de datos</a>{version && <span> · v{version}</span>}</p>
+  </div>
+</footer>

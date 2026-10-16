@@ -1,0 +1,27 @@
+{
+  "nombre": "Estudio Ejemplo",
+  "eslogan": "Arquitectura para vivir mejor",
+  "descripcion": "Estudio de arquitectura en Medellín. Diseñamos casas, remodelaciones y espacios de trabajo con luz, ventilación natural y presupuesto claro desde el inicio.",
+  "url": "https://ejemplo.com",
+  "idioma": "es-CO",
+  "tipo_negocio": "ProfessionalService",
+  "ciudad": "Medellín",
+  "region": "Antioquia",
+  "pais": "CO",
+  "direccion": "",
+  "area_servicio": ["Medellín", "Valle de Aburrá", "Oriente antioqueño"],
+  "telefono": "+57 300 000 0000",
+  "whatsapp": "573000000000",
+  "whatsapp_mensaje": "Hola, vi su página web y quiero conversar sobre un proyecto.",
+  "correo": "hola@ejemplo.com",
+  "horario": "Lunes a viernes, 8:00 a 17:00",
+  "formulario_url": "",
+  "redes": [
+    { "nombre": "Instagram", "url": "https://www.instagram.com/ejemplo" }
+  ],
+  "logo": "",
+  "imagen_compartir": "../../assets/media/compartir.jpg",
+  "color_tema": "#141312",
+  "verificacion_google": "",
+  "analitica_token": ""
+}

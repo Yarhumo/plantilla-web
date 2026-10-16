@@ -1,0 +1,22 @@
+---
+// Tarjeta de proyecto: toda la tarjeta es un solo enlace (más fácil de tocar en celular).
+import { Picture } from 'astro:assets';
+interface Props { proyecto: any; prioridad?: boolean }
+const { proyecto, prioridad = false } = Astro.props;
+const d = proyecto.data;
+---
+<article class="tarjeta revelar">
+  <a href={`/proyectos/${proyecto.id}/`} class="tarjeta__enlace">
+    <Picture
+      src={d.portada}
+      alt={d.portada_alt}
+      formats={['avif', 'webp']}
+      widths={[480, 800, 1200]}
+      sizes="(min-width: 60rem) 33vw, (min-width: 40rem) 50vw, 100vw"
+      loading={prioridad ? 'eager' : 'lazy'}
+      class="tarjeta__img"
+    />
+    <h3 class="tarjeta__titulo">{d.titulo}</h3>
+    <p class="rotulo">{[d.categoria, d.ubicacion].filter(Boolean).join(' · ')}</p>
+  </a>
+</article>

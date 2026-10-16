@@ -1,0 +1,128 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { getSitio, getProyectos, enlaceWhatsApp, anio, absoluta } from '../../lib/datos';
+
+export async function getStaticPaths() {
+  const lista = await getProyectos();
+  return lista.map((proyecto, i) => ({
+    params: { slug: proyecto.id },
+    props: { proyecto, siguiente: lista[(i + 1) % lista.length] },
+  }));
+}
+
+const { proyecto, siguiente } = Astro.props;
+const d = proyecto.data;
+const { Content } = await render(proyecto);
+const sitio = await getSitio();
+const base = sitio.url.replace(/\/$/, '');
+const url = `${base}/proyectos/${proyecto.id}/`;
+const portadaAbs = absoluta((await getImage({ src: d.portada, width: 1600, format: 'jpg' })).src, Astro.site);
+
+const ficha = [
+  ['Tipo', d.categoria],
+  ['Lugar', d.ubicacion],
+  ['Año', anio(d.fecha)],
+  ['Área', d.area],
+  ['Estado', d.estado],
+  ['Cliente', d.cliente],
+].filter(([, v]) => v);
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    name: d.titulo,
+    description: d.resumen,
+    url,
+    image: [portadaAbs],
+    ...(d.fecha && { dateCreated: d.fecha.toISOString().slice(0, 10) }),
+    ...(d.ubicacion && { locationCreated: { '@type': 'Place', name: d.ubicacion } }),
+    creator: { '@id': `${base}/#negocio` },
+    ...(d.creditos.length && {
+      contributor: d.creditos.map((c) => ({ '@type': 'Thing', name: c.nombre, description: c.rol })),
+    }),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${base}/` },
+      { '@type': 'ListItem', position: 2, name: 'Proyectos', item: `${base}/proyectos/` },
+      { '@type': 'ListItem', position: 3, name: d.titulo, item: url },
+    ],
+  },
+];
+const whatsapp = enlaceWhatsApp(sitio.whatsapp, `Hola, vi el proyecto "${d.titulo}" en su página y quiero conversar.`);
+---
+<Base
+  titulo={d.ubicacion ? `${d.titulo}, ${d.ubicacion}` : d.titulo}
+  descripcion={d.resumen}
+  imagen={d.portada}
+  imagenAlt={d.portada_alt}
+  tipo="article"
+  schema={schema}
+  mensajeWhatsApp={`Hola, vi el proyecto "${d.titulo}" en su página y quiero conversar.`}
+>
+  <article>
+    <nav class="contenedor migas" aria-label="Migas de pan">
+      <a href="/proyectos/">← Todos los proyectos</a>
+    </nav>
+    <header class="contenedor proyecto__cabeza">
+      <h1>{d.titulo}</h1>
+      <p class="entradilla">{d.resumen}</p>
+    </header>
+    <figure class="proyecto__portada">
+      <Picture
+        src={d.portada}
+        alt={d.portada_alt}
+        formats={['avif', 'webp']}
+        widths={[640, 1024, 1600, 2000]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+      {d.foto_credito && <figcaption class="contenedor rotulo">Foto: {d.foto_credito}</figcaption>}
+    </figure>
+
+    <div class="contenedor proyecto__cuerpo">
+      {ficha.length > 0 && (
+        <dl class="ficha">
+          {ficha.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+        </dl>
+      )}
+      <div class="prosa"><Content /></div>
+    </div>
+
+    {d.galeria.length > 0 && (
+      <section class="contenedor galeria" aria-label="Galería">
+        {d.galeria.map((g) => (
+          <figure class="revelar">
+            <Picture src={g.imagen} alt={g.alt} formats={['avif', 'webp']} widths={[640, 1024, 1600]} sizes="(min-width: 60rem) 50vw, 100vw" />
+            {g.pie && <figcaption class="rotulo">{g.pie}</figcaption>}
+          </figure>
+        ))}
+      </section>
+    )}
+
+    {d.creditos.length > 0 && (
+      <section class="contenedor seccion creditos" aria-labelledby="creditos">
+        <h2 id="creditos" class="rotulo">Créditos</h2>
+        <dl class="ficha">
+          {d.creditos.map((c) => <div><dt>{c.rol}</dt><dd>{c.nombre}</dd></div>)}
+        </dl>
+      </section>
+    )}
+
+    <section class="seccion contacto">
+      <div class="contenedor estrecho">
+        <h2>¿Un proyecto parecido?</h2>
+        {whatsapp && <a class="boton" href={whatsapp} target="_blank" rel="noopener">Conversemos por WhatsApp<span class="sr"> (abre en una pestaña nueva)</span> ↗</a>}
+        {siguiente && siguiente.id !== proyecto.id && (
+          <p class="siguiente"><a href={`/proyectos/${siguiente.id}/`}>Siguiente: {siguiente.data.titulo} →</a></p>
+        )}
+      </div>
+    </section>
+  </article>
+</Base>

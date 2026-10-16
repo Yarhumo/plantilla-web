@@ -1,0 +1,25 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+interface Props { nombre: string; logo?: ImageMetadata }
+const { nombre, logo } = Astro.props;
+const ruta = Astro.url.pathname;
+const enlaces = [
+  { href: '/proyectos/', texto: 'Proyectos' },
+  { href: '/#contacto', texto: 'Contacto' },
+];
+---
+<header class="encabezado">
+  <div class="contenedor encabezado__fila">
+    <a href="/" class="marca" aria-label={`${nombre}, inicio`}>
+      {logo ? <Image src={logo} alt="" height={40} loading="eager" /> : <span>{nombre}</span>}
+    </a>
+    <nav aria-label="Principal">
+      <ul class="nav">
+        {enlaces.map((e) => (
+          <li><a href={e.href} aria-current={ruta.startsWith(e.href) && e.href !== '/#contacto' ? 'page' : undefined}>{e.texto}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>

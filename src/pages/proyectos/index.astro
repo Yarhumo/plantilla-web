@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+import Tarjeta from '../../components/Tarjeta.astro';
+import { getSitio, getProyectos } from '../../lib/datos';
+
+const sitio = await getSitio();
+const proyectos = await getProyectos();
+const base = sitio.url.replace(/\/$/, '');
+const migas = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${base}/` },
+    { '@type': 'ListItem', position: 2, name: 'Proyectos', item: `${base}/proyectos/` },
+  ],
+};
+---
+<Base
+  titulo="Proyectos"
+  descripcion={`Proyectos de ${sitio.nombre}${sitio.ciudad ? ` en ${sitio.ciudad} y alrededores` : ''}.`}
+  schema={[migas]}
+>
+  <section class="seccion contenedor">
+    <h1>Proyectos</h1>
+    <div class="rejilla">
+      {proyectos.map((p, i) => <Tarjeta proyecto={p} prioridad={i < 3} />)}
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,154 @@
+/* ============================================================
+   Estilos base. La identidad de cada cliente se cambia SOLO en
+   las variables de :root (colores, tipografías, medidas).
+   ============================================================ */
+:root {
+  /* Color (verificar contraste AA al cambiar: texto ≥ 4,5:1) */
+  --tinta: #141312;
+  --papel: #f6f3ec;
+  --banda: #ebe6db;
+  --gris: #5f5a52;        /* 6,3:1 sobre papel */
+  --acento: #b5401c;      /* 5,0:1 sobre papel: enlaces y botones */
+  --acento-texto: #ffffff;
+
+  /* Tipografía: por defecto fuentes del sistema (0 KB). Para una
+     fuente propia, ver README → "Tipografías". */
+  --f-titulo: ui-serif, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --f-texto: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Escala fluida: crece con la pantalla sin saltos */
+  --t-xl: clamp(2.2rem, 1.4rem + 4vw, 4.5rem);
+  --t-l: clamp(1.6rem, 1.2rem + 2vw, 2.6rem);
+  --t-m: clamp(1.15rem, 1rem + 0.6vw, 1.4rem);
+  --t-s: 0.8rem;
+
+  --ancho: 76rem;
+  --estrecho: 44rem;
+  --margen: clamp(1rem, 4vw, 2.5rem);
+  --aire: clamp(3.5rem, 8vw, 7rem);
+  --radio: 2px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 5rem; }
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font: 400 1.0625rem/1.65 var(--f-texto);
+  text-rendering: optimizeLegibility;
+}
+img, picture, svg, video { display: block; max-width: 100%; height: auto; }
+h1, h2, h3 { font-family: var(--f-titulo); font-weight: 500; line-height: 1.1; text-wrap: balance; margin: 0 0 0.6em; }
+h1 { font-size: var(--t-xl); letter-spacing: -0.01em; }
+h2 { font-size: var(--t-l); }
+h3 { font-size: var(--t-m); }
+p { margin: 0 0 1em; text-wrap: pretty; }
+a { color: var(--acento); text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--acento); outline-offset: 3px; }
+ul, ol { padding: 0; margin: 0; list-style: none; }
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.saltar { position: absolute; left: 1rem; top: -4rem; background: var(--tinta); color: var(--papel); padding: 0.6rem 1rem; z-index: 10; }
+.saltar:focus { top: 1rem; }
+
+.contenedor { width: min(100% - 2 * var(--margen), var(--ancho)); margin-inline: auto; }
+.estrecho { width: min(100% - 2 * var(--margen), var(--estrecho)); margin-inline: auto; }
+.seccion { padding-block: var(--aire); }
+.banda { background: var(--banda); }
+.entradilla { font-size: var(--t-m); color: var(--gris); max-width: 38em; }
+.rotulo { font-family: var(--f-mono); font-size: var(--t-s); letter-spacing: 0.06em; text-transform: uppercase; color: var(--gris); }
+
+/* Encabezado */
+.encabezado { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--papel) 90%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid color-mix(in srgb, var(--tinta) 10%, transparent); }
+.encabezado__fila { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4rem; }
+.marca { color: var(--tinta); text-decoration: none; font-family: var(--f-titulo); font-size: 1.25rem; }
+.nav { display: flex; gap: clamp(1rem, 3vw, 2rem); }
+.nav a { color: var(--tinta); text-decoration: none; padding-block: 0.75rem; }
+.nav a[aria-current="page"], .nav a:hover { text-decoration: underline; }
+
+/* Portada */
+.portada { display: grid; }
+.portada > * { grid-area: 1 / 1; }
+.portada img { width: 100%; height: min(88svh, 60rem); min-height: 30rem; object-fit: cover; }
+/* Velo oscuro abajo: garantiza contraste del texto blanco sobre cualquier foto */
+.portada:has(img)::after { content: ""; grid-area: 1 / 1; background: linear-gradient(to bottom, rgb(0 0 0 / 0) 30%, rgb(0 0 0 / 0.62)); }
+.portada__texto { position: relative; z-index: 1; align-self: end; padding-block: var(--aire) 2.5rem; color: var(--tinta); }
+.portada:has(img) .portada__texto, .portada:has(img) .entradilla { color: #fff; }
+
+/* Botones (área táctil ≥ 44 px) */
+.boton { display: inline-block; min-height: 44px; padding: 0.7rem 1.4rem; background: var(--acento); color: var(--acento-texto); text-decoration: none; border-radius: var(--radio); font-weight: 600; transition: background-color 0.2s; }
+.boton:hover { background: var(--tinta); }
+.boton--claro { background: transparent; color: var(--tinta); box-shadow: inset 0 0 0 1px var(--tinta); }
+.boton--claro:hover { background: var(--tinta); color: var(--papel); }
+
+/* Rejillas */
+.rejilla { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); }
+.pasos { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); counter-reset: paso; }
+.pasos li { counter-increment: paso; }
+.pasos li::before { content: counter(paso, decimal-leading-zero); display: block; font-family: var(--f-mono); color: var(--acento); margin-bottom: 0.5rem; }
+
+/* Tarjetas */
+.tarjeta__enlace { display: block; color: inherit; text-decoration: none; }
+.tarjeta img { aspect-ratio: 3 / 2; width: 100%; object-fit: cover; }
+.tarjeta__titulo { margin: 0.9rem 0 0.2rem; }
+.tarjeta__enlace:hover .tarjeta__titulo { text-decoration: underline; text-underline-offset: 0.2em; }
+
+/* Proyecto */
+.migas { padding-top: 1.5rem; }
+.proyecto__cabeza { padding-block: 2rem; }
+.proyecto__portada { margin: 0; }
+.proyecto__portada img { width: 100%; max-height: 85svh; object-fit: cover; }
+.proyecto__portada figcaption { padding-top: 0.5rem; }
+.proyecto__cuerpo { display: grid; gap: 2.5rem; padding-block: var(--aire); }
+@media (min-width: 60rem) { .proyecto__cuerpo { grid-template-columns: 18rem 1fr; } }
+.prosa { max-width: 40em; }
+.ficha { margin: 0; display: grid; gap: 0.8rem; align-content: start; }
+.ficha dt { font-family: var(--f-mono); font-size: var(--t-s); text-transform: uppercase; letter-spacing: 0.06em; color: var(--gris); }
+.ficha dd { margin: 0; }
+.galeria { display: grid; gap: 1.5rem; padding-bottom: var(--aire); }
+@media (min-width: 60rem) { .galeria { grid-template-columns: 1fr 1fr; } }
+.galeria figure { margin: 0; }
+.galeria figcaption { padding-top: 0.4rem; }
+.siguiente { margin-top: 2rem; }
+
+/* Citas y preguntas */
+.cita { margin: 0 0 2.5rem; padding-left: 1.25rem; border-left: 3px solid var(--acento); }
+.cita blockquote { margin: 0; font-family: var(--f-titulo); font-size: var(--t-m); }
+.pregunta { border-top: 1px solid color-mix(in srgb, var(--tinta) 18%, transparent); padding-block: 1rem; }
+.pregunta summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
+.pregunta p { margin: 0.75rem 0 0; color: var(--gris); }
+
+/* Contacto */
+.contacto { background: var(--tinta); color: var(--papel); }
+.contacto .entradilla, .contacto .rotulo { color: color-mix(in srgb, var(--papel) 78%, transparent); }
+.contacto a:not(.boton) { color: var(--papel); }
+.contacto .boton--claro { color: var(--papel); box-shadow: inset 0 0 0 1px var(--papel); }
+.contacto__lista { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; align-items: center; margin-top: 1.5rem; }
+
+/* Pie */
+.pie { padding-block: 3rem 2rem; font-size: 0.95rem; }
+.pie__fila { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1.5rem; }
+.pie__nombre { font-family: var(--f-titulo); font-size: 1.2rem; margin: 0; }
+.pie__enlaces { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+.pie__enlaces a { display: inline-block; padding-block: 0.6rem; }
+.pie__legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid color-mix(in srgb, var(--tinta) 12%, transparent); color: var(--gris); font-size: 0.85rem; }
+
+/* ------------------------------------------------------------
+   Movimiento: UN solo gesto (aparición suave al hacer scroll) y
+   transición entre páginas. Sin JavaScript. Se apaga si la persona
+   pide "reducir movimiento"; si el navegador no lo soporta, no pasa nada.
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  @supports (animation-timeline: view()) {
+    .revelar {
+      animation: aparecer linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+    @keyframes aparecer { from { opacity: 0; translate: 0 1.5rem; } }
+  }
+}

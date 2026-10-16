@@ -1,0 +1,11 @@
+{
+  // Publicación en Cloudflare Workers (solo archivos estáticos, gratis).
+  // Cambia "name" por el nombre del proyecto del cliente (sin espacios ni tildes).
+  "name": "web-cliente",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "force-trailing-slash"
+  }
+}

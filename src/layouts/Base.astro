@@ -1,0 +1,116 @@
+---
+// Plantilla común de todas las páginas: SEO, tarjetas para compartir, datos estructurados.
+import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
+import { getSitio, absoluta, enlaceWhatsApp } from '../lib/datos';
+import Encabezado from '../components/Encabezado.astro';
+import Pie from '../components/Pie.astro';
+import '../styles/global.css';
+import pkg from '../../package.json';
+
+interface Props {
+  titulo?: string;
+  descripcion?: string;
+  imagen?: ImageMetadata;
+  imagenAlt?: string;
+  tipo?: 'website' | 'article';
+  schema?: Record<string, unknown>[];
+  noindex?: boolean;
+  mensajeWhatsApp?: string;
+}
+
+const sitio = await getSitio();
+const p = Astro.props;
+const tituloCompleto = p.titulo ? `${p.titulo} — ${sitio.nombre}` : `${sitio.nombre}${sitio.eslogan ? ` — ${sitio.eslogan}` : ''}`;
+const descripcion = p.descripcion ?? sitio.descripcion;
+const canonica = absoluta(Astro.url.pathname, Astro.site);
+
+const fuenteImagen = p.imagen ?? sitio.imagen_compartir;
+const og = fuenteImagen
+  ? await getImage({ src: fuenteImagen, width: 1200, height: 630, fit: 'cover', format: 'jpg', quality: 80 })
+  : undefined;
+const ogUrl = og ? absoluta(og.src, Astro.site) : undefined;
+
+const base = sitio.url.replace(/\/$/, '');
+const negocio = {
+  '@context': 'https://schema.org',
+  '@type': sitio.tipo_negocio,
+  '@id': `${base}/#negocio`,
+  name: sitio.nombre,
+  description: sitio.descripcion,
+  url: `${base}/`,
+  ...(sitio.telefono && { telephone: sitio.telefono }),
+  ...(sitio.correo && { email: sitio.correo }),
+  ...(ogUrl && { image: ogUrl }),
+  ...(sitio.horario && { openingHours: sitio.horario }),
+  address: {
+    '@type': 'PostalAddress',
+    ...(sitio.direccion && { streetAddress: sitio.direccion }),
+    ...(sitio.ciudad && { addressLocality: sitio.ciudad }),
+    ...(sitio.region && { addressRegion: sitio.region }),
+    addressCountry: sitio.pais,
+  },
+  ...(sitio.area_servicio.length && {
+    areaServed: sitio.area_servicio.map((name) => ({ '@type': 'Place', name })),
+  }),
+  ...(sitio.redes.length && { sameAs: sitio.redes.map((r) => r.url) }),
+};
+const web = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${base}/#web`,
+  url: `${base}/`,
+  name: sitio.nombre,
+  inLanguage: sitio.idioma,
+  publisher: { '@id': `${base}/#negocio` },
+};
+const schemas = [web, negocio, ...(p.schema ?? [])];
+const whatsapp = enlaceWhatsApp(sitio.whatsapp, p.mensajeWhatsApp ?? sitio.whatsapp_mensaje);
+const locale = sitio.idioma.replace('-', '_');
+---
+<!doctype html>
+<html lang={sitio.idioma}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloCompleto}</title>
+    <meta name="description" content={descripcion} />
+    <link rel="canonical" href={canonica} />
+    {p.noindex && <meta name="robots" content="noindex" />}
+    <meta name="version-sitio" content={pkg.version} />
+    <meta name="theme-color" content={sitio.color_tema} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    {sitio.verificacion_google && <meta name="google-site-verification" content={sitio.verificacion_google} />}
+
+    <meta property="og:type" content={p.tipo ?? 'website'} />
+    <meta property="og:site_name" content={sitio.nombre} />
+    <meta property="og:locale" content={locale} />
+    <meta property="og:title" content={p.titulo ?? sitio.nombre} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={canonica} />
+    {ogUrl && <meta property="og:image" content={ogUrl} />}
+    {ogUrl && <meta property="og:image:width" content="1200" />}
+    {ogUrl && <meta property="og:image:height" content="630" />}
+    {ogUrl && <meta property="og:image:alt" content={p.imagenAlt ?? sitio.nombre} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={p.titulo ?? sitio.nombre} />
+    <meta name="twitter:description" content={descripcion} />
+    {ogUrl && <meta name="twitter:image" content={ogUrl} />}
+
+    {schemas.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+    <script type="speculationrules" set:html={JSON.stringify({ prerender: [{ where: { href_matches: '/*' }, eagerness: 'moderate' }] })} />
+
+    {sitio.analitica_token && (
+      <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: sitio.analitica_token })}></script>
+    )}
+  </head>
+  <body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    <Encabezado nombre={sitio.nombre} logo={sitio.logo} />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Pie sitio={sitio} whatsapp={whatsapp} version={pkg.version} />
+  </body>
+</html>

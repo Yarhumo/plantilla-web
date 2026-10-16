@@ -1,0 +1,30 @@
+{
+  "titular": "Casas pensadas antes de construirlas",
+  "bajada": "Diseño, presupuesto y obra en un mismo proceso, para que cada decisión se tome a tiempo.",
+  "portada": "../../assets/media/portada.jpg",
+  "portada_alt": "Sala con luz natural y ventanal hacia un jardín",
+  "boton_texto": "Conversemos",
+  "intro_titulo": "Un estudio pequeño, un proceso claro",
+  "intro": "Trabajamos con familias y empresas que quieren entender su proyecto antes de invertir.\n\nCada etapa se aprueba antes de pasar a la siguiente: así cuidamos su tiempo y su presupuesto.",
+  "servicios_titulo": "Qué hacemos",
+  "servicios": [
+    { "titulo": "Diseño de vivienda", "texto": "Casas nuevas y casas de campo, del concepto a la licencia." },
+    { "titulo": "Remodelación", "texto": "Apartamentos y casas que cambian con la familia." },
+    { "titulo": "Presupuesto con modelo", "texto": "Cantidades salidas del modelo para comparar cotizaciones con datos." }
+  ],
+  "proyectos_titulo": "Proyectos",
+  "proceso_titulo": "Cómo trabajamos",
+  "proceso": [
+    { "titulo": "Conversación", "texto": "Escuchamos qué necesita y qué presupuesto tiene en mente." },
+    { "titulo": "Concepto y presupuesto", "texto": "Definimos qué cabe, cuánto cuesta y en qué orden." },
+    { "titulo": "Proyecto", "texto": "Planos, licencia y cantidades de obra." },
+    { "titulo": "Obra", "texto": "Acompañamiento o construcción con aliados." }
+  ],
+  "testimonios": [],
+  "preguntas": [
+    { "pregunta": "¿Trabajan fuera de Medellín?", "respuesta": "Sí. Fuera del área metropolitana la visita de diagnóstico tiene un costo que se descuenta si el proyecto sigue." },
+    { "pregunta": "¿Cuándo hablamos de presupuesto?", "respuesta": "Desde la primera conversación. En la cotización damos rangos de referencia." }
+  ],
+  "contacto_titulo": "Conversemos",
+  "contacto_texto": "Cuéntenos qué tiene en mente. Respondemos en un día hábil."
+}

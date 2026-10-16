@@ -1,0 +1,124 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Tarjeta from '../components/Tarjeta.astro';
+import { getSitio, getInicio, getProyectos, enlaceWhatsApp } from '../lib/datos';
+
+const sitio = await getSitio();
+const ini = await getInicio();
+const proyectos = await getProyectos();
+const destacados = (proyectos.filter((p) => p.data.destacado).length
+  ? proyectos.filter((p) => p.data.destacado)
+  : proyectos
+).slice(0, 6);
+const whatsapp = enlaceWhatsApp(sitio.whatsapp, sitio.whatsapp_mensaje);
+const parrafos = (ini.intro ?? '').split(/\n\s*\n/).filter(Boolean);
+
+const faq = ini.preguntas.length
+  ? [{
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: ini.preguntas.map((q) => ({
+        '@type': 'Question',
+        name: q.pregunta,
+        acceptedAnswer: { '@type': 'Answer', text: q.respuesta },
+      })),
+    }]
+  : [];
+---
+<Base imagen={ini.portada} imagenAlt={ini.portada_alt} schema={faq}>
+  <section class="portada" aria-labelledby="titular">
+    {ini.portada && (
+      <Picture
+        src={ini.portada}
+        alt={ini.portada_alt}
+        formats={['avif', 'webp']}
+        widths={[640, 1024, 1600, 2000]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+        class="portada__img"
+      />
+    )}
+    <div class="contenedor portada__texto">
+      <h1 id="titular">{ini.titular}</h1>
+      {ini.bajada && <p class="entradilla">{ini.bajada}</p>}
+      <a class="boton" href="#contacto">{ini.boton_texto}</a>
+    </div>
+  </section>
+
+  {parrafos.length > 0 && (
+    <section class="seccion contenedor estrecho revelar" aria-labelledby="intro">
+      {ini.intro_titulo && <h2 id="intro">{ini.intro_titulo}</h2>}
+      {parrafos.map((t) => <p>{t}</p>)}
+    </section>
+  )}
+
+  {ini.servicios.length > 0 && (
+    <section class="seccion banda" aria-labelledby="servicios">
+      <div class="contenedor">
+        <h2 id="servicios">{ini.servicios_titulo}</h2>
+        <ul class="rejilla">
+          {ini.servicios.map((s) => (
+            <li class="revelar"><h3>{s.titulo}</h3><p>{s.texto}</p></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {destacados.length > 0 && (
+    <section class="seccion contenedor" aria-labelledby="proyectos">
+      <h2 id="proyectos">{ini.proyectos_titulo}</h2>
+      <div class="rejilla">
+        {destacados.map((p) => <Tarjeta proyecto={p} />)}
+      </div>
+      {proyectos.length > destacados.length && <p><a href="/proyectos/">Ver todos los proyectos →</a></p>}
+    </section>
+  )}
+
+  {ini.proceso.length > 0 && (
+    <section class="seccion banda" aria-labelledby="proceso">
+      <div class="contenedor">
+        <h2 id="proceso">{ini.proceso_titulo}</h2>
+        <ol class="pasos">
+          {ini.proceso.map((s) => <li class="revelar"><h3>{s.titulo}</h3><p>{s.texto}</p></li>)}
+        </ol>
+      </div>
+    </section>
+  )}
+
+  {ini.testimonios.length > 0 && (
+    <section class="seccion contenedor estrecho" aria-label="Testimonios">
+      {ini.testimonios.map((t) => (
+        <figure class="cita revelar">
+          <blockquote><p>{t.texto}</p></blockquote>
+          <figcaption>{t.autor}{t.contexto && <span class="rotulo"> · {t.contexto}</span>}</figcaption>
+        </figure>
+      ))}
+    </section>
+  )}
+
+  {ini.preguntas.length > 0 && (
+    <section class="seccion contenedor estrecho" aria-labelledby="preguntas">
+      <h2 id="preguntas">Preguntas frecuentes</h2>
+      {ini.preguntas.map((q) => (
+        <details class="pregunta"><summary>{q.pregunta}</summary><p>{q.respuesta}</p></details>
+      ))}
+    </section>
+  )}
+
+  <section id="contacto" class="seccion contacto" aria-labelledby="contacto-titulo">
+    <div class="contenedor estrecho">
+      <h2 id="contacto-titulo">{ini.contacto_titulo}</h2>
+      {ini.contacto_texto && <p class="entradilla">{ini.contacto_texto}</p>}
+      <ul class="contacto__lista">
+        {whatsapp && <li><a class="boton" href={whatsapp} target="_blank" rel="noopener">Escribir por WhatsApp<span class="sr"> (abre en una pestaña nueva)</span> ↗</a></li>}
+        {sitio.formulario_url && <li><a class="boton boton--claro" href={sitio.formulario_url} target="_blank" rel="noopener">Llenar el formulario<span class="sr"> (abre en una pestaña nueva)</span> ↗</a></li>}
+        {sitio.correo && <li><a href={`mailto:${sitio.correo}`}>{sitio.correo}</a></li>}
+        {sitio.telefono && <li><a href={`tel:${sitio.telefono.replace(/\s/g, '')}`}>{sitio.telefono}</a></li>}
+        {sitio.horario && <li class="rotulo">{sitio.horario}</li>}
+      </ul>
+    </div>
+  </section>
+</Base>
